@@ -3,6 +3,9 @@ import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
+from zoneinfo import ZoneInfo
+
+IST = ZoneInfo("Asia/Kolkata")
 
 BG = '#F5F7FA'
 CARD = '#FFFFFF'
@@ -196,7 +199,7 @@ def load_data():
     session = get_session()
     raw = fetch_preopen(session)
     df = to_dataframe(raw, NIFTY50)
-    fetched_at = datetime.now().strftime("%d %b %Y, %H:%M:%S")
+    fetched_at = datetime.now(IST).strftime("%d %b %Y, %H:%M:%S")
     return df, fetched_at
 
 
