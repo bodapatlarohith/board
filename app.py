@@ -155,6 +155,12 @@ html, body, [class*="css"] {{
     margin-top: 20px;
     box-shadow: 0 1px 3px rgba(16, 24, 40, 0.04), 0 1px 2px rgba(16, 24, 40, 0.06);
 }}
+[data-testid="stVerticalBlockBorderWrapper"] {{
+    background-color: {CARD};
+    border: 1px solid {BORDER} !important;
+    border-radius: 16px !important;
+    box-shadow: 0 1px 3px rgba(16, 24, 40, 0.04), 0 1px 2px rgba(16, 24, 40, 0.06);
+}}
 .panel-heading {{
     font-size: 15px;
     font-weight: 700;
@@ -257,46 +263,44 @@ with k5:
 col1, col2 = st.columns([3, 1])
 
 with col1:
-    st.markdown('<div class="chart-panel">', unsafe_allow_html=True)
-    st.markdown('<div class="panel-heading">Premarket Movement — % Change</div>', unsafe_allow_html=True)
-    fig1, ax1 = plt.subplots(figsize=(10, 11))
-    fig1.patch.set_facecolor(CARD)
-    colors = [UP if c >= 0 else DOWN for c in df["change"]]
-    ax1.set_facecolor(CARD)
-    ax1.barh(df["symbol"], df["change"], color=colors, height=0.6)
-    ax1.axvline(0, color=BORDER, linewidth=1)
-    ax1.tick_params(colors=MUTED, labelsize=9)
-    for label in ax1.get_yticklabels():
-        label.set_color(TEXT)
-    for spine in ax1.spines.values():
-        spine.set_visible(False)
-    ax1.grid(axis='x', color=BORDER, linewidth=0.8)
-    ax1.set_axisbelow(True)
-    for i, change in enumerate(df["change"]):
-        ax1.text(change, i, f' {change:+.2f}%', va='center',
-                  color=TEXT, fontsize=8,
-                  ha='left' if change >= 0 else 'right')
-    st.pyplot(fig1, use_container_width=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+    with st.container(border=True):
+        st.markdown('<div class="panel-heading">Premarket Movement — % Change</div>', unsafe_allow_html=True)
+        fig1, ax1 = plt.subplots(figsize=(10, 11))
+        fig1.patch.set_facecolor(CARD)
+        colors = [UP if c >= 0 else DOWN for c in df["change"]]
+        ax1.set_facecolor(CARD)
+        ax1.barh(df["symbol"], df["change"], color=colors, height=0.6)
+        ax1.axvline(0, color=BORDER, linewidth=1)
+        ax1.tick_params(colors=MUTED, labelsize=9)
+        for label in ax1.get_yticklabels():
+            label.set_color(TEXT)
+        for spine in ax1.spines.values():
+            spine.set_visible(False)
+        ax1.grid(axis='x', color=BORDER, linewidth=0.8)
+        ax1.set_axisbelow(True)
+        for i, change in enumerate(df["change"]):
+            ax1.text(change, i, f' {change:+.2f}%', va='center',
+                      color=TEXT, fontsize=8,
+                      ha='left' if change >= 0 else 'right')
+        st.pyplot(fig1, use_container_width=True)
 
 with col2:
-    st.markdown('<div class="chart-panel">', unsafe_allow_html=True)
-    st.markdown('<div class="panel-heading">Market Breadth</div>', unsafe_allow_html=True)
-    fig2, ax2 = plt.subplots(figsize=(5, 5))
-    fig2.patch.set_facecolor(CARD)
-    ax2.set_facecolor(CARD)
-    wedges, texts, autotexts = ax2.pie(
-        [up_count, down_count],
-        labels=[f"Up\n{up_count}", f"Down\n{down_count}"],
-        colors=[UP, DOWN], wedgeprops={"width": 0.42, "edgecolor": CARD, "linewidth": 3},
-        autopct="%1.0f%%", startangle=90,
-        textprops={"color": TEXT, "fontsize": 10, "fontweight": "bold"}
-    )
-    for at in autotexts:
-        at.set_color('#FFFFFF')
-        at.set_fontweight('bold')
-    st.pyplot(fig2, use_container_width=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+    with st.container(border=True):
+        st.markdown('<div class="panel-heading">Market Breadth</div>', unsafe_allow_html=True)
+        fig2, ax2 = plt.subplots(figsize=(5, 5))
+        fig2.patch.set_facecolor(CARD)
+        ax2.set_facecolor(CARD)
+        wedges, texts, autotexts = ax2.pie(
+            [up_count, down_count],
+            labels=[f"Up\n{up_count}", f"Down\n{down_count}"],
+            colors=[UP, DOWN], wedgeprops={"width": 0.42, "edgecolor": CARD, "linewidth": 3},
+            autopct="%1.0f%%", startangle=90,
+            textprops={"color": TEXT, "fontsize": 10, "fontweight": "bold"}
+        )
+        for at in autotexts:
+            at.set_color('#FFFFFF')
+            at.set_fontweight('bold')
+        st.pyplot(fig2, use_container_width=True)
 
 st.markdown(
     '<div class="footer-note">Data source: NSE India &nbsp;·&nbsp; Auto-refreshes every 60 seconds &nbsp;·&nbsp; '
