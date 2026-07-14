@@ -189,7 +189,9 @@ div.stButton > button:hover {{
 def load_data():
     session = get_session()
     raw = fetch_preopen(session)
-    return to_dataframe(raw, NIFTY50)
+    df = to_dataframe(raw, NIFTY50)
+    fetched_at = datetime.now().strftime("%d %b %Y, %H:%M:%S")
+    return df, fetched_at
 
 
 header_col1, header_col2 = st.columns([5, 1])
@@ -202,7 +204,7 @@ with header_col2:
         st.cache_data.clear()
 
 try:
-    df = load_data()
+    df, timestamp = load_data()
 except Exception as e:
     st.markdown(f"""
     <div class="chart-panel">
@@ -214,7 +216,6 @@ except Exception as e:
 
 top_loser = df.iloc[0]
 top_gainer = df.iloc[-1]
-timestamp = datetime.now().strftime("%d %b %Y, %H:%M:%S")
 up_count = int((df["change"] >= 0).sum())
 down_count = int((df["change"] < 0).sum())
 ratio = up_count / down_count if down_count > 0 else float('inf')
